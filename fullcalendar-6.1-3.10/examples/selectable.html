@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <script src='../dist/index.global.js'></script>
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var logoutButton = document.getElementById('logout-button');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+      // Redirect to login.html
+      window.location.href = 'login.html';
+    });
+  }
+      var calendarEl = document.getElementById('calendar');
+
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        footerToolbar: {
+          left: 'customButton settingsButton',
+          center: '',
+          right: '',
+        },
+        dayRender: function (info) {
+  var cell = info.el;
+
+  cell.addEventListener('mouseover', function () {
+    // Add your hover effect styling here
+    cell.style.backgroundColor = 'lightblue';
+
+    // Create and append the image element
+ 
+  });
+
+  cell.addEventListener('mouseout', function () {
+    // Reset the styling and remove the image on mouseout
+    cell.style.backgroundColor = '';
+    var hoverImage = cell.querySelector('.hover-image');
+    if (hoverImage) {
+      hoverImage.remove();
+    }
+  });
+},
+
+
+        customButtons: {
+          customButton: {
+            text: 'Create new event',
+            click: function () {
+              var titleInput = document.createElement('input');
+              titleInput.type = 'text';
+              titleInput.placeholder = 'Event Title';
+
+              var startDateInput = document.createElement('input');
+              startDateInput.type = 'datetime-local'; // Change to datetime-local input type
+              startDateInput.value = getFormattedDateTime(new Date()); // Default to current date and time
+
+              var endDateInput = document.createElement('input');
+              endDateInput.type = 'datetime-local'; // Change to datetime-local input type
+              endDateInput.value = getFormattedDateTime(new Date()); // Default to current date and time
+
+              var colorInput = document.createElement('input');
+              colorInput.type = 'color';
+              colorInput.value = '#3498db'; // Default color
+
+              var saveButton = document.createElement('button');
+              saveButton.textContent = 'Save';
+              saveButton.onclick = function () {
+                var title = titleInput.value.trim();
+                var startDate = new Date(startDateInput.value);
+                var endDate = new Date(endDateInput.value);
+                var color = colorInput.value.trim();
+
+                if (title !== '' && !isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+                  // Add the event to the calendar
+                  calendar.addEvent({
+                    title: title,
+                    start: startDate,
+                    end: endDate,
+                    backgroundColor: color,
+                    borderColor: color
+                  });
+
+                  // Close the modal
+                  modal.close();
+                }
+              };
+
+              var cancelButton = document.createElement('button');
+              cancelButton.textContent = 'Cancel';
+              cancelButton.onclick = function () {
+                modal.close();
+              };
+
+              var modalContent = document.createElement('div');
+              modalContent.className = 'modal-content';
+              modalContent.appendChild(createRow('Event Title:', titleInput));
+              modalContent.appendChild(createRow('Start Date & Time:', startDateInput));
+              modalContent.appendChild(createRow('End Date & Time:', endDateInput));
+              modalContent.appendChild(createRow('Color:', colorInput));
+              modalContent.appendChild(createRow('', saveButton));
+              modalContent.appendChild(createRow('', cancelButton));
+
+              var modal = showModal(modalContent);
+            }
+          },
+          settingsButton: {
+            text: 'Settings',
+            click: function () {
+              var buttonColorInput = document.createElement('input');
+              buttonColorInput.type = 'color';
+              buttonColorInput.value = '#3498db'; // Default button color
+
+              var fontSelect = document.createElement('select');
+              var fontOptions = ['Arial, sans-serif', 'Times New Roman, serif', 'Courier New, monospace', 'Verdana, sans-serif'];
+              for (var i = 0; i < fontOptions.length; i++) {
+                var option = document.createElement('option');
+                option.value = fontOptions[i];
+                option.text = fontOptions[i];
+                fontSelect.appendChild(option);
+              }
+
+              var fontSizeInput = document.createElement('input');
+              fontSizeInput.type = 'number';
+              fontSizeInput.value = 14; // Default font size
+
+              var saveButton = document.createElement('button');
+              saveButton.textContent = 'Save';
+              saveButton.onclick = function () {
+                var newButtonColor = buttonColorInput.value.trim();
+                var newFont = fontSelect.value;
+                var newFontSize = fontSizeInput.value;
+
+                // Update styles as needed
+
+                settingsModal.close();
+              };
+
+              var cancelButton = document.createElement('button');
+              cancelButton.textContent = 'Cancel';
+              cancelButton.onclick = function () {
+                settingsModal.close();
+              };
+
+              var settingsModalContent = document.createElement('div');
+              settingsModalContent.className = 'modal-content';
+              settingsModalContent.appendChild(createRow('Button Color:', buttonColorInput));
+              settingsModalContent.appendChild(createRow('Font Family:', fontSelect));
+              settingsModalContent.appendChild(createRow('Font Size:', fontSizeInput));
+              settingsModalContent.appendChild(createRow('', saveButton));
+              settingsModalContent.appendChild(createRow('', cancelButton));
+
+              var settingsModal = showModal(settingsModalContent);
+            }
+          }
+        },
+
+        initialDate: '2024-01-12',
+        navLinks: true,
+        selectable: true,
+        selectMirror: true,
+
+        select: function(arg) {
+          var titleInput = document.createElement('input');
+          titleInput.type = 'text';
+          titleInput.placeholder = 'Event Title';
+
+          var colorInput = document.createElement('input');
+          colorInput.type = 'color';
+          colorInput.value = '#3498db'; // Default color
+
+          var saveButton = document.createElement('button');
+          saveButton.textContent = 'Save';
+          saveButton.onclick = function() {
+            var title = titleInput.value.trim();
+            var color = colorInput.value.trim();
+            if (title !== '') {
+              calendar.addEvent({
+                title: title,
+                start: arg.start,
+                end: arg.end,
+                backgroundColor: color,
+                borderColor: color
+              });
+              calendar.unselect();
+            }
+            modal.close();
+          };
+
+          var cancelButton = document.createElement('button');
+          cancelButton.textContent = 'Cancel';
+          cancelButton.onclick = function() {
+            calendar.unselect();
+            modal.close();
+          };
+
+          var modalContent = document.createElement('div');
+          modalContent.className = 'modal-content';
+          modalContent.appendChild(createRow('Title:', titleInput));
+          modalContent.appendChild(createRow('Color:', colorInput));
+          modalContent.appendChild(createRow('', saveButton));
+          modalContent.appendChild(createRow('', cancelButton));
+
+          var modal = showModal(modalContent);
+        },
+        eventClick: function(arg) {
+          // Open a new pop-up window
+          var popup = window.open('', 'Event Editor', 'width=400, height=300');
+
+          // Create a container for the form in the pop-up window
+          var formContainer = popup.document.createElement('div');
+
+          // Create input for renaming event
+          var titleInput = popup.document.createElement('input');
+          titleInput.type = 'text';
+          titleInput.value = arg.event.title;
+          formContainer.appendChild(createRow('Title:', titleInput));
+
+          // Create input for event color
+          var colorInput = popup.document.createElement('input');
+          colorInput.type = 'color';
+          colorInput.value = arg.event.backgroundColor;
+          formContainer.appendChild(createRow('Color:', colorInput));
+
+          // Create input for event start date & time
+          var startDateInput = popup.document.createElement('input');
+          startDateInput.type = 'datetime-local';
+          startDateInput.value = getFormattedDateTime(arg.event.start);
+          formContainer.appendChild(createRow('Start Date & Time:', startDateInput));
+
+          // Create input for event end date & time
+          var endDateInput = popup.document.createElement('input');
+          endDateInput.type = 'datetime-local';
+          endDateInput.value = getFormattedDateTime(arg.event.end);
+          formContainer.appendChild(createRow('End Date & Time:', endDateInput));
+
+          // Create save button
+          var saveButton = popup.document.createElement('button');
+          saveButton.textContent = 'Save';
+          saveButton.onclick = function() {
+            var newTitle = titleInput.value.trim();
+            var newColor = colorInput.value.trim();
+            var newStartDate = new Date(startDateInput.value);
+            var newEndDate = new Date(endDateInput.value);
+
+            if (newTitle !== '' && !isNaN(newStartDate.getTime()) && !isNaN(newEndDate.getTime())) {
+              arg.event.setProp('title', newTitle);
+              arg.event.setProp('backgroundColor', newColor);
+              arg.event.setStart(newStartDate);
+              arg.event.setEnd(newEndDate);
+            }
+
+            popup.close();
+          };
+
+          // Create delete button
+          var deleteButton = popup.document.createElement('button');
+          deleteButton.textContent = 'Delete this event';
+          deleteButton.onclick = function() {
+            if (confirm('Are you sure you want to delete this event?')) {
+              arg.event.remove();
+            }
+            popup.close();
+          };
+
+          formContainer.appendChild(createRow('', saveButton));
+          formContainer.appendChild(createRow('', deleteButton));
+
+          // Append the form to the pop-up window
+          popup.document.body.appendChild(formContainer);
+        },
+        editable: true,
+        dayMaxEvents: true,
+        events: [
+          // Your existing events...
+          {
+                title: 'Trening',
+                start: '2024-01-12T10:00:00',
+                end: '2024-01-12T12:00:00',
+                backgroundColor: '#ffcc00', // Yellow color
+                borderColor: '#ffcc00', // Yellow color
+            },
+            {
+                title: 'Njemački',
+                start: '2024-01-15T14:00:00',
+                end: '2024-01-15T16:00:00',
+                backgroundColor: '#ff6666', // Red color
+                borderColor: '#ff6666', // Red color
+            },
+            {
+                title: 'Talijanski',
+                start: '2024-01-17T15:00:00',
+                end: '2024-01-17T17:00:00',
+                backgroundColor: '#ff6666', // Red color
+                borderColor: '#ff6666', // Red color
+            },
+            {
+                title: 'Trening',
+                start: '2024-01-26T10:00:00',
+                end: '2024-01-26T12:00:00',
+                backgroundColor: '#ffcc00', // Red color
+                borderColor: '#ffcc00', // Red color
+            },
+            {
+                title: 'Kamp',
+                start: '2024-01-28T10:00:00',
+                end: '2024-01-31T12:00:00',
+                backgroundColor: 'blue', // Red color
+                borderColor: 'blue', // Red color
+            }
+        ]
+
+        
+      });
+
+      calendar.render();
+
+      // Helper function to create a row with label and element
+      function createRow(label, ...elements) {
+        var row = document.createElement('div');
+        if (label !== '') {
+          var labelElement = document.createElement('div');
+          labelElement.textContent = label;
+          row.appendChild(labelElement);
+        }
+        elements.forEach(element => row.appendChild(element));
+        return row;
+      }
+
+      // Helper function to show modal
+      function showModal(content) {
+        var modal = window.open('', 'Event Creator', 'width=300, height=300, top=200, left=400');
+        modal.document.body.appendChild(content);
+        return modal;
+      }
+
+      // Helper function to format date and time to the required input format
+      function getFormattedDateTime(date) {
+        var year = date.getFullYear();
+        var month = ('0' + (date.getMonth() + 1)).slice(-2);
+        var day = ('0' + date.getDate()).slice(-2);
+        var hours = ('0' + date.getHours()).slice(-2);
+        var minutes = ('0' + date.getMinutes()).slice(-2);
+        return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+      }
+    });
+
+  </script>
+  <style>
+
+    body {
+      margin: 40px 10px;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    #calendar {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    div.row {
+      margin-bottom: 10px;
+    }
+
+    div.row div {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    /* Additional styles for centering and increasing size */
+    div.modal-content {
+      text-align: center;
+    }
+
+    div.modal-content input,
+    div.modal-content select,
+    div.modal-content button {
+      display: block;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      padding: 8px; /* Adjust the padding for better appearance */
+      font-size: 16px; /* Adjust the font size for better appearance */
+    }
+    #logout-container {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+
+#logout-button {
+  padding: 8px;
+  font-size: 14px;
+}
+#calendar .fc-day:hover {
+  background-color: lightblue;
+  cursor: pointer; /* Optional: Change cursor on hover */
+}
+
+
+
+  </style>
+</head>
+<body>
+
+  <div id='calendar'></div>
+  <div id="logout-container">
+    <button id="logout-button">Logout</button>
+  </div>
+</body>
+</html>

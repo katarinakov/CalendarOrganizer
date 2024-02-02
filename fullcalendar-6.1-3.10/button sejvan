@@ -1,0 +1,50 @@
+ customButtons: {
+      customButton: {
+        text: 'My Custom Button',
+        click: function () {
+          // Add your custom button logic here
+          var form = document.createElement('form');
+          form.innerHTML = `
+          <label for="eventTitle">Title:</label>
+              <input type="text" id="eventTitle" required>
+              <br>
+              <label for="eventStartDate">Start Date:</label>
+              <input type="datetime-local" id="eventStartDate" required>
+              <br>
+              <label for="eventEndDate">End Date:</label>
+              <input type="datetime-local" id="eventEndDate" required>
+              <br>
+              <label for="eventColor">Color:</label>
+              <input type="color" id="eventColor" value="#3498db">
+              <br>
+              <input type="button" value="Create Event" onclick="createEvent()">
+            `;
+          // Display a modal dialog
+          var modal = showModal(form);
+// Helper function to create the event
+      function createEvent() {
+              // Retrieve values from the form
+              var newEventTitle = document.getElementById('eventTitle').value.trim();
+              var newEventStartDate = document.getElementById('eventStartDate').value.trim();
+              var newEventEndDate = document.getElementById('eventEndDate').value.trim();
+              var newEventColor = document.getElementById('eventColor').value.trim();
+
+              // Check if the title is not empty
+              if (newEventTitle !== '') {
+                // Add the new event to the calendar
+                calendar.addEvent({
+                  title: newEventTitle,
+                  start: newEventStartDate,
+                  end: newEventEndDate,
+                  allDay: true,
+                  backgroundColor: newEventColor,
+                  borderColor: newEventColor,
+                });
+
+                // Close the modal
+                modal.close();
+              }
+            }
+            window.createEvent=createEvent;
+          },
+        },

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .register-link {
+            display: block;
+            margin-top: 10px;
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Updated style for the div containing "Forgot password?" */
+        .forgot-password-text {
+            color: #3498db; /* Blue color */
+            font-size: 14px; /* Adjust the font size as needed */
+        }
+
+        .forgot-password-text:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('form').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the form from submitting (to avoid page reload)
+                window.location.href = 'selectable.html'; // Redirect to selectable.html
+                window.close(); // Close the login page
+            });
+
+            document.querySelector('.register-link').addEventListener('click', function () {
+                var registerPopup = window.open('register.html', 'RegisterPopup', 'width=400, height=500, top=200, left=400');
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form action="#" method="post">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="ivan.horvat@gmail.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="......" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <a href="#" class="register-link">Register a new account</a>
+        <div class="forgot-password-text" >Forgot password?</div>
+    </div>
+</body>
+</html>
